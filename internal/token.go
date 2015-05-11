@@ -17,6 +17,7 @@ import (
 	"strings"
 	"time"
 
+	"crypto/tls"
 	"golang.org/x/net/context"
 )
 
@@ -134,7 +135,7 @@ func providerAuthHeaderWorks(tokenURL string) bool {
 	return true
 }
 
-func RetrieveToken(ctx context.Context, ClientID, ClientSecret, TokenURL string, v url.Values) (*Token, error) {
+func RetrieveToken(ctx context.Context, ClientID, ClientSecret, TokenURL string, InsecureSkipVerify bool, v url.Values) (*Token, error) {
 	hc, err := ContextClient(ctx)
 	if err != nil {
 		return nil, err
@@ -152,6 +153,14 @@ func RetrieveToken(ctx context.Context, ClientID, ClientSecret, TokenURL string,
 	if !bustedAuth {
 		req.SetBasicAuth(ClientID, ClientSecret)
 	}
+
+	if InsecureSkipVerify {
+		tr := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		hc.Transport = tr
+	}
+
 	r, err := hc.Do(req)
 	if err != nil {
 		return nil, err

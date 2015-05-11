@@ -44,6 +44,14 @@ type Config struct {
 
 	// Scope specifies optional requested permissions.
 	Scopes []string
+
+	// InsecureSkipVerify controls whether to verify the
+	// server's certificate chain and host name.
+	// If InsecureSkipVerify is true, TLS accepts any certificate
+	// presented by the server and any host name in that certificate.
+	// In this mode, TLS is susceptible to man-in-the-middle attacks.
+	// This should be used only for testing.
+	InsecureSkipVerify bool
 }
 
 // A TokenSource is anything that can return a token.
